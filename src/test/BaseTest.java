@@ -13,8 +13,8 @@ public class BaseTest {
         config.setMyId(myId);
         config.setTimeout(1000);
         config.setLearningInterval(1000);
-        config.setDataDir("./dataDir/");
-        config.setEnableDataPersistence(false);
+        config.setDataDir("/dataDir/");
+        config.setEnableDataPersistence(true);
 
         List<HostConfig> hosts = new ArrayList<>();
 

@@ -12,6 +12,7 @@ public class ServerTest extends BaseTest{
 			server.setGroupId(1, new KvCallback());
 			server.setGroupId(2, new KvCallback());
 			server.start();
+			
 		} catch (IOException | InterruptedException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}

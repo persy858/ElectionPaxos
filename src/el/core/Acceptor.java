@@ -1,13 +1,18 @@
 package el.core;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import el.beans.Config;
 import el.beans.HostConfig;
 import el.beans.Value;
 import el.packet.*;
 import el.util.CommClient;
+import el.util.FileUtils;
 import el.util.ObjectSerialize;
 import el.util.ObjectSerializeImpl;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
@@ -18,26 +23,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
 public class Acceptor {
-
-    static class Instance {
-        // current ballot number
-        private int ballot;
-        // accepted value
-        private Value value;
-        // accepted value's ballot
-        private int acceptedBallot;
-
-        public Instance(int ballot, Value value, int acceptedBallot) {
-            super();
-            this.ballot = ballot;
-            this.value = value;
-            this.acceptedBallot = acceptedBallot;
-        }
-
-        public void setValue(Value value) {
-            this.value = value;
-        }
-    }
 
     // accepter's state, contain each instances
     private Map<Integer, Instance> instanceState = new HashMap<>();
@@ -138,13 +123,13 @@ public class Acceptor {
             prepareResponse(peerId, id, instance, true, 0, null);
         } else {
             Instance current = instanceState.get(instance);
-            if (ballot > current.ballot) {
-                current.ballot = ballot;
+            if (ballot > current.getBallot()) {
+                current.setBallot(ballot);
                 // 持久化到磁盘
                 instancePersistence();
-                prepareResponse(peerId, id, instance, true, current.acceptedBallot, current.value);
+                prepareResponse(peerId, id, instance, true, current.getAcceptedBallot(), current.getValue());
             } else {
-                prepareResponse(peerId, id, instance, false, current.ballot, null);
+                prepareResponse(peerId, id, instance, false, current.getBallot(), null);
             }
         }
     }
@@ -173,15 +158,15 @@ public class Acceptor {
      * @throws IOException
      * @throws UnknownHostException
      */
-    public void onAccept(int peerId, int instance, int ballot, Value value) throws UnknownHostException, IOException {
+	public void onAccept(int peerId, int instance, int ballot, Value value) throws UnknownHostException, IOException {
         this.logger.info("[onaccept]" + peerId + " " + instance + " " + ballot + " " + value);
         if (!this.instanceState.containsKey(instance)) {
             acceptResponse(peerId, id, instance, false);
         } else {
             Instance current = this.instanceState.get(instance);
-            if (ballot == current.ballot) {
-                current.acceptedBallot = ballot;
-                current.value = value;
+            if (ballot == current.getBallot()) {
+                current.setAcceptedBallot(ballot);
+                current.setValue(value);
                 // 成功
                 this.logger.info("[onaccept success]");
                 this.acceptedValue.put(instance, value);
@@ -238,15 +223,15 @@ public class Acceptor {
     private void instancePersistence() {
         if (!this.confObject.isEnableDataPersistence())
             return;
-//        try {
-//            FileWriter fileWriter = new FileWriter(getInstanceFileAddr());
-//            fileWriter.write(gson.toJson(this.instanceState));
-//            fileWriter.flush();
-//            fileWriter.close();
-//        } catch (IOException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
+        try {
+            FileWriter fileWriter = new FileWriter(getInstanceFileAddr());
+            fileWriter.write(JSON.toJSONString(this.instanceState));
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -255,33 +240,39 @@ public class Acceptor {
     private void instanceRecover() {
         if (!this.confObject.isEnableDataPersistence())
             return;
-//        String data = FileUtils.readFromFile(getInstanceFileAddr());
-//        if (data == null || data.length() == 0) {
-//            File file = new File(getInstanceFileAddr());
-//            if (!file.exists()) {
-//                try {
-//                    file.createNewFile();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//            return;
-//        }
-//        JSONObject jsonObject = JSONObject.parseObject(data);
-//        this.instanceState.putAll(jsonObject);
-//        this.instanceState.forEach((key, value) -> {
-//            if (value.value != null)
-//                this.acceptedValue.put(key, value.value);
-//        });
+        String data = FileUtils.readFromFile(getInstanceFileAddr());
+        if (data == null || data.length() == 0) {
+            File file = new File(getInstanceFileAddr());
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return;
+        }
+        Map<String, Object> map = JSON.parseObject(data);
+        Map<Integer, Instance> mapInt = new HashMap<Integer, Instance>();
+        for (Map.Entry<String, Object> m : map.entrySet()) {
+            JSONObject jsonObj = (JSONObject) m.getValue();
+            Instance instance = JSONObject.parseObject(jsonObj.toJSONString(), Instance.class);
+            mapInt.put(Integer.parseInt(m.getKey()), instance);
+        }
+        this.instanceState.putAll(mapInt);
+        this.instanceState.forEach((key, value) -> {
+            if (value.getValue() != null)
+                this.acceptedValue.put(key, value.getValue());
+        });
     }
 
     /**
-     * 获取instance持久化的文件位置
+              * 获取instance持久化的文件位置
      *
      * @return
      */
     private String getInstanceFileAddr() {
-        return this.confObject.getDataDir() + "accepter-" + this.groupId + "-" + this.id + ".json";
+    	return System.getProperty("user.dir")+confObject.getDataDir()+"data.bin";
     }
 
     public Map<Integer, Value> getAcceptedValue() {

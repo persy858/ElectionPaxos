@@ -227,9 +227,9 @@ public class Learner {
 				this.state.put(instance, k);
 				// 当learner学习成功时，让accepter也去同步这个状态
 				this.acceptor.getAcceptedValue().put(instance, k);
-				Acceptor.Instance acceptInstance = this.acceptor.getInstanceState().get(instance);
+				Instance acceptInstance = this.acceptor.getInstanceState().get(instance);
 				if (acceptInstance == null) {
-					this.acceptor.getInstanceState().put(instance, new Acceptor.Instance(1, k, 1));
+					this.acceptor.getInstanceState().put(instance, new Instance(1, k, 1));
 				} else {
 					acceptInstance.setValue(k);
 				}
