@@ -63,4 +63,16 @@ public class Config {
     public void setEnableDataPersistence(boolean enableDataPersistence) {
         this.enableDataPersistence = enableDataPersistence;
     }
+
+    @Override
+    public String toString() {
+        return "Config{" +
+                "hosts=" + hosts +
+                ", myId=" + myId +
+                ", timeout=" + timeout +
+                ", learningInterval=" + learningInterval +
+                ", dataDir='" + dataDir + '\'' +
+                ", enableDataPersistence=" + enableDataPersistence +
+                '}';
+    }
 }

@@ -13,8 +13,8 @@ public class ClientTest {
 			ElectionClient client = new ElectionClient();
 			client.setSendBufferSize(20);
 			client.setRemoteAddress("localhost", 1024);
-			client.submit(JSONObject.toJSONBytes(new MsgBean("put", "name", "Mike")), 1);
-			client.submit(JSONObject.toJSONBytes(new MsgBean("put", "name", "Neo")), 1);
+			client.submit(JSONObject.toJSONBytes(new MsgBean("put", "name", "M1")), 1);
+			client.submit(JSONObject.toJSONBytes(new MsgBean("put", "name", "M2")), 1);
 			client.submit(JSONObject.toJSONBytes(new MsgBean("get", "name", "")), 1);
 			client.flush(1);
 		} catch (IOException | PaxosClientNullAddressException e) {

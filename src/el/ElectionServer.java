@@ -19,23 +19,19 @@ import java.util.logging.Logger;
 
 public class ElectionServer {
 
-    private Config config;
-
-    private HostConfig hostConfig;
-
-    private Map<Integer, PaxosCallback> groupidToCallback = new HashMap<>();
-    private Map<Integer, Proposer> proposerMap = new HashMap<>();
-    private Map<Integer, Learner> learnerMap = new HashMap<>();
-    private Map<Integer, Acceptor> acceptorMap = new HashMap<>();
-    private Logger logger = Logger.getLogger("ElectionServer");
-    private ObjectSerialize objectSerialize = new ObjectSerializeImpl();
-
-    private CommClient client;
+    private final Config config;
+    private final HostConfig hostConfig;
+    private final Map<Integer, PaxosCallback> groupidToCallback = new HashMap<>();
+    private final Map<Integer, Proposer> proposerMap = new HashMap<>();
+    private final Map<Integer, Learner> learnerMap = new HashMap<>();
+    private final Map<Integer, Acceptor> acceptorMap = new HashMap<>();
+    private final ObjectSerialize objectSerialize = new ObjectSerializeImpl();
+    private final CommClient client;
 
     public ElectionServer(Config config) {
         this.config = config;
         this.hostConfig = getMyConfig();
-        this.client = new CommClient(10);
+        this.client = new CommClient(3);
     }
 
 

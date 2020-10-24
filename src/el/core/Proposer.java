@@ -13,7 +13,6 @@ import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
 
 public class Proposer {
 	enum Proposer_State {
@@ -91,8 +90,6 @@ public class Proposer {
 
 	private ObjectSerialize objectSerialize = new ObjectSerializeImpl();
 
-	private Logger logger = Logger.getLogger("MyPaxos");
-
 	// 客户端
 	private CommClient client;
 
@@ -112,7 +109,6 @@ public class Proposer {
 					PacketBean msg = this.msgQueue.take();
 					recvPacket(msg);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -123,7 +119,6 @@ public class Proposer {
 					PacketBean msg = this.submitMsgQueue.take();
 					submit((Value) msg.getData());
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -155,7 +150,7 @@ public class Proposer {
 			break;
 		case "AcceptResponsePacket":
 			AcceptResponsePacket acceptResponsePacket = (AcceptResponsePacket) bean.getData();
-			onAcceptResponce(acceptResponsePacket.getId(), acceptResponsePacket.getInstance(),
+			onAcceptResponse(acceptResponsePacket.getId(), acceptResponsePacket.getInstance(),
 					acceptResponsePacket.isOk());
 			break;
 		case "SubmitPacket":
@@ -191,7 +186,7 @@ public class Proposer {
 		this.currentInstance++;
 		Instance instance = new Instance(1, new HashSet<>(), null, 0, new HashSet<>(), false, Proposer_State.READY);
 		this.instanceState.put(this.currentInstance, instance);
-		if (this.isLastSumbitSucc == false) {
+		if (!this.isLastSumbitSucc) {
 			// 执行完整的流程
 			prepare(this.id, this.currentInstance, 1);
 		} else {
@@ -287,12 +282,10 @@ public class Proposer {
 				try {
 					this.client.sendTo(info.getHost(), info.getPort(), msg);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			});
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
@@ -317,7 +310,7 @@ public class Proposer {
 	 * @param ok
 	 * @throws InterruptedException
 	 */
-	public void onAcceptResponce(int peerId, int instance, boolean ok) throws InterruptedException {
+	public void onAcceptResponse(int peerId, int instance, boolean ok) throws InterruptedException {
 		Instance current = this.instanceState.get(instance);
 		if (current.state != Proposer_State.ACCEPT)
 			return;

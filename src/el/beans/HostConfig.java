@@ -37,4 +37,13 @@ public class HostConfig {
     public void setPort(int port) {
         this.port = port;
     }
+
+    @Override
+    public String toString() {
+        return "HostConfig{" +
+                "id=" + id +
+                ", host='" + host + '\'' +
+                ", port=" + port +
+                '}';
+    }
 }

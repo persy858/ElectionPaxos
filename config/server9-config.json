@@ -1,0 +1,54 @@
+{
+  "hosts": [
+    {
+      "id": 1,
+      "host": "localhost",
+      "port": 1024
+    },
+    {
+      "id": 2,
+      "host": "localhost",
+      "port": 1025
+    },
+    {
+      "id": 3,
+      "host": "localhost",
+      "port": 1026
+    },
+    {
+      "id": 4,
+      "host": "localhost",
+      "port": 1027
+    },
+    {
+      "id": 5,
+      "host": "localhost",
+      "port": 1028
+    },
+    {
+      "id": 6,
+      "host": "localhost",
+      "port": 1029
+    },
+    {
+      "id": 7,
+      "host": "localhost",
+      "port": 1030
+    },
+    {
+      "id": 8,
+      "host": "localhost",
+      "port": 1031
+    },
+    {
+      "id": 9,
+      "host": "localhost",
+      "port": 1032
+    }
+  ],
+  "myid": 9,
+  "timeout": 1000,
+  "learningInterval": 1000,
+  "dataDir": "./dataDir/",
+  "enableDataPersistence": true
+}

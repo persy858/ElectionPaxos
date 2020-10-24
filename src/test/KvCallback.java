@@ -9,14 +9,14 @@ import java.util.Map;
 
 public class KvCallback implements PaxosCallback {
     /**
-     * 使用map来保存key与value映射
+     * the kv map store the key and value
      */
-    private Map<String, String> kv = new HashMap<>();
+    private final Map<String, String> kv = new HashMap<>();
 
     @Override
     public void callback(byte[] msg) {
-        /**
-         * 一共提供了三种动作： get : 获取 put : 添加 delete : 删除
+        /*
+         * three method：get put and delete
          */
         String msString = new String(msg);
         MsgBean bean = JSONObject.parseObject(msString, MsgBean.class);
