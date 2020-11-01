@@ -38,6 +38,10 @@ public class Connection implements Conn {
         if (readyToClose)
             throw new ConnectionCloseException();
         ContextBean bean = context.getChanToContextBean().get(channel);
+        if (bean == null) {
+            readyToClose = true;
+            throw new ConnectionCloseException();
+        }
         ByteBuffer buffer = ByteBuffer.allocate(data.length + 4);
         buffer.putInt(data.length);
         buffer.put(data);
