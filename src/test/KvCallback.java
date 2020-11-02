@@ -22,15 +22,15 @@ public class KvCallback implements PaxosCallback {
         MsgBean bean = JSONObject.parseObject(msString, MsgBean.class);
         switch (bean.getType()) {
             case "get":
-                System.out.println(kv.get(bean.getKey()));
+                System.out.println(" responses to voting:" + kv.get(bean.getKey()));
                 break;
             case "put":
                 kv.put(bean.getKey(), bean.getValue());
-                System.out.println("ok");
+                System.out.println("recv voting proposals: "+ bean.getValue());
                 break;
             case "delete":
                 kv.remove(bean.getKey());
-                System.out.println("ok");
+                System.out.println("delete ok");
                 break;
             default:
                 break;
