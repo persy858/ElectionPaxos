@@ -5,7 +5,7 @@ import el.ElectionServer;
 
 import java.io.IOException;
 
-public class ServerTest8 extends BaseTest {
+public class Server8 extends BaseTest {
     public static void main(String[] args) {
         try {
             ElectionServer server = new ElectionServer(loadConfig("./config/server8-config.json"));

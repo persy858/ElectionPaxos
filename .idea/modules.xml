@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ElectionPaxos.iml" filepath="$PROJECT_DIR$/ElectionPaxos.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Assignment3Paxos.iml" filepath="$PROJECT_DIR$/Assignment3Paxos.iml" />
     </modules>
   </component>
 </project>

@@ -1,23 +1,28 @@
 package test;
 
+import com.alibaba.fastjson.JSONObject;
 import el.ElectionServer;
 import el.beans.Config;
-import el.beans.HostConfig;
+import el.util.FileUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-public class ServerTest2 extends BaseTest{
+public class Server1 extends BaseTest{
+
 	public static void main(String[] args) {
+
 		try {
-			ElectionServer server = new ElectionServer(loadConfig("./config/server2-config.json"));
+			ElectionServer server = new ElectionServer(loadConfig("./config/server1-config.json"));
 			server.setGroupId(1, new KvCallback());
 //			server.setGroupId(2, new KvCallback());
 			server.start();
+
 		} catch (IOException | InterruptedException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
+
+
+
 
 }
